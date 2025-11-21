@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SavorSync Pro v1.4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SavorSync Mobile Safe</title>
     <style>
         :root {
-            --primary: #4ecca3; /* Green for Go */
-            --focus: #3b82f6;   /* Blue for Chew */
-            --rest: #f59e0b;    /* Orange for Rest */
+            --primary: #4ecca3; 
+            --focus: #3b82f6;   
+            --rest: #f59e0b;    
             --bg: #f8fafc;
             --text: #1e293b;
             --card: #ffffff;
@@ -22,46 +22,42 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            /* FIXED: Use 'dvh' (dynamic viewport height) so address bar doesn't hide buttons */
+            height: 100dvh; 
             overflow: hidden;
         }
 
         /* --- Header --- */
         header {
             padding: 15px 20px;
+            /* FIXED: Add padding for iPhone top status bar (notch area) */
+            padding-top: max(15px, env(safe-area-inset-top)); 
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--card);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             z-index: 100;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         h1 { margin: 0; font-size: 1.2rem; font-weight: 700; color: #333; }
         
-        .header-right {
-            display: flex;
-            gap: 15px;
-        }
+        .header-right { display: flex; gap: 15px; }
 
         .icon-btn {
-            background: none;
-            border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            padding: 5px;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            background: none; border: none; font-size: 1.4rem; cursor: pointer;
+            padding: 5px; opacity: 0.7; transition: opacity 0.2s;
         }
-        .icon-btn:hover { opacity: 1; }
 
         /* --- Main Display --- */
         main {
-            flex: 1;
+            flex: 1; /* Takes up all available space */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
+            width: 100%;
         }
 
         .stats-pill {
@@ -75,10 +71,10 @@
             color: #666;
         }
 
-        /* Breathing Circle */
         .circle-container {
-            width: 260px;
-            height: 260px;
+            /* Responsive sizing */
+            width: min(260px, 70vw);
+            height: min(260px, 70vw);
             position: relative;
             display: flex;
             justify-content: center;
@@ -86,173 +82,92 @@
         }
 
         .circle-bg {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: absolute;
+            width: 100%; height: 100%; border-radius: 50%; background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: absolute;
             transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .circle-inner {
-            width: 90%;
-            height: 90%;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            transition: background-color 0.5s ease;
+            width: 90%; height: 90%; border-radius: 50%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 2; transition: background-color 0.5s ease;
         }
 
         .instruction-main {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            line-height: 1.2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 1.8rem; font-weight: 800; color: white;
+            text-align: center; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .instruction-sub { font-size: 1rem; color: rgba(255,255,255,0.9); margin-top: 5px; }
 
-        .instruction-sub {
-            font-size: 1rem;
-            color: rgba(255,255,255,0.9);
-            margin-top: 5px;
-        }
-
-        /* --- Animations --- */
-        /* State: BITE */
+        /* Animation States */
         .state-bite .circle-bg { transform: scale(1); }
         .state-bite .circle-inner { background-color: var(--primary); }
-
-        /* State: CHEW */
         .state-chew .circle-inner { background-color: var(--focus); }
-        .state-chew .circle-bg {
-            background-color: rgba(59, 130, 246, 0.2);
-            animation: pulseJaw 0.5s infinite alternate; 
-        }
-
-        /* State: REST */
+        .state-chew .circle-bg { background-color: rgba(59, 130, 246, 0.2); animation: pulseJaw 0.5s infinite alternate; }
         .state-rest .circle-bg { transform: scale(0.85); }
         .state-rest .circle-inner { background-color: var(--rest); }
+        @keyframes pulseJaw { from { transform: scale(1); } to { transform: scale(1.15); } }
 
-        @keyframes pulseJaw {
-            from { transform: scale(1); }
-            to { transform: scale(1.15); } 
-        }
-
-        /* --- Controls --- */
+        /* --- Controls (The Fixed Part) --- */
         .control-bar {
-            padding: 30px;
             background: var(--card);
             display: flex;
             justify-content: center;
             gap: 20px;
             border-radius: 30px 30px 0 0;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            flex-shrink: 0; /* Stop this from shrinking */
+            
+            /* FIXED: Padding logic for bottom bars */
+            padding: 30px;
+            padding-bottom: max(30px, env(safe-area-inset-bottom) + 20px);
         }
 
         .btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            border: none;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.1s;
-            width: 120px;
+            padding: 15px 30px; border-radius: 50px; border: none;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: transform 0.1s; width: 140px;
         }
         .btn:active { transform: scale(0.96); }
-        
         .btn-primary { background: #333; color: white; }
         .btn-secondary { background: #e2e8f0; color: #333; }
         .btn-danger { background: #fee2e2; color: #ef4444; }
 
-        /* --- Modals (Common) --- */
+        /* Modals */
         .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center; /* Centered */
-            z-index: 200;
-            backdrop-filter: blur(3px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(3px);
         }
         .modal.active { display: flex; }
-
         .modal-content {
-            background: white;
-            width: 85%;
-            max-width: 400px;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            animation: fadeInScale 0.25s ease-out;
+            background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); animation: fadeInScale 0.25s ease-out;
         }
-
-        @keyframes fadeInScale { 
-            from { opacity: 0; transform: scale(0.95); } 
-            to { opacity: 1; transform: scale(1); } 
-        }
-
-        .modal h2 { margin-top: 0; color: #333; font-size: 1.5rem; }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
-        /* Settings Styling */
+        /* Settings & History & Help Styles */
         .setting-row { margin-bottom: 20px; }
         .slider-container { display: flex; align-items: center; gap: 15px; }
         input[type=range] { flex: 1; accent-color: var(--primary); }
-        
-        /* History Styling */
-        .history-list {
-            max-height: 300px;
-            overflow-y: auto;
-            list-style: none;
-            padding: 0;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-
-        /* Help Styling */
-        .help-step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-top: 5px;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-        .dot-green { background: var(--primary); }
-        .dot-blue { background: var(--focus); }
-        .dot-orange { background: var(--rest); }
-        
-        .step-text strong { display: block; margin-bottom: 2px; }
-        .step-text span { font-size: 0.9rem; color: #666; }
-
+        .history-list { max-height: 300px; overflow-y: auto; list-style: none; padding: 0; }
+        .history-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         .close-btn-full { width: 100%; margin-top: 20px; }
+        .help-step { display: flex; align-items: flex-start; margin-bottom: 15px; }
+        .step-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 5px; margin-right: 12px; flex-shrink: 0; }
+        .dot-green { background: var(--primary); } .dot-blue { background: var(--focus); } .dot-orange { background: var(--rest); }
 
     </style>
 </head>
 <body>
 
     <header>
-        <button class="icon-btn" onclick="openHistory()" aria-label="History">📊</button>
+        <button class="icon-btn" onclick="openHistory()">📊</button>
         <h1>SavorSync</h1>
         <div class="header-right">
-            <button class="icon-btn" onclick="openHelp()" aria-label="Help">❔</button>
-            <button class="icon-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+            <button class="icon-btn" onclick="openHelp()">❔</button>
+            <button class="icon-btn" onclick="openSettings()">⚙️</button>
         </div>
     </header>
 
@@ -271,57 +186,30 @@
     </main>
 
     <div class="control-bar">
-        <button id="btnMain" class="btn btn-primary" onclick="toggleState()">Start</button>
+        <button id="btnMain" class="btn btn-primary" onclick="toggleState()">Start Meal</button>
         <button id="btnFinish" class="btn btn-danger" style="display:none;" onclick="finishMeal()">Finish</button>
     </div>
 
     <div id="modalHelp" class="modal" onclick="if(event.target===this) closeHelp()">
         <div class="modal-content">
-            <h2>How to Use</h2>
-            
-            <div class="help-step">
-                <div class="step-dot dot-green"></div>
-                <div class="step-text">
-                    <strong>1. Bite (Green)</strong>
-                    <span>Pick up food and put it in your mouth.</span>
-                </div>
-            </div>
-
-            <div class="help-step">
-                <div class="step-dot dot-blue"></div>
-                <div class="step-text">
-                    <strong>2. Chew (Blue Pulse)</strong>
-                    <span>Chew in rhythm with the pulsing circle. Do not swallow yet.</span>
-                </div>
-            </div>
-
-            <div class="help-step">
-                <div class="step-dot dot-orange"></div>
-                <div class="step-text">
-                    <strong>3. Rest (Orange)</strong>
-                    <span>Swallow and breathe. Put the fork down.</span>
-                </div>
-            </div>
-
-            <p style="font-size:0.85rem; color:#888; margin-top:20px; text-align:center;">
-                Tip: The phone will vibrate(only support Andriod) to guide you so you don't have to stare at the screen.
-            </p>
-
+            <h2 style="margin-top:0">How to Use</h2>
+            <div class="help-step"><div class="step-dot dot-green"></div><div><strong>1. Bite</strong><span>Pick up food.</span></div></div>
+            <div class="help-step"><div class="step-dot dot-blue"></div><div><strong>2. Chew</strong><span>Match the pulse.</span></div></div>
+            <div class="help-step"><div class="step-dot dot-orange"></div><div><strong>3. Rest</strong><span>Swallow & Breathe.</span></div></div>
             <button class="btn btn-secondary close-btn-full" onclick="closeHelp()">Got it</button>
         </div>
     </div>
 
     <div id="modalSettings" class="modal" onclick="if(event.target===this) closeSettings()">
         <div class="modal-content">
-            <h2>Settings</h2>
+            <h2 style="margin-top:0">Settings</h2>
             <div class="setting-row">
                 <label><strong>Chewing Time</strong></label>
                 <div class="slider-container">
-                    <span style="font-size:0.9rem">10s</span>
+                    <span>10s</span>
                     <input type="range" id="chewRange" min="10" max="40" value="15" oninput="updateSettingsUI()">
-                    <span id="chewValue" style="font-weight:bold; width:40px; text-align:right;">15s</span>
+                    <span id="chewValue" style="width:40px; text-align:right;">15s</span>
                 </div>
-                <p style="font-size:0.8rem; color:#666; margin-top:5px;">Adjust based on food texture (e.g., Steak = 30s).</p>
             </div>
             <button class="btn btn-primary close-btn-full" onclick="closeSettings()">Save</button>
         </div>
@@ -329,21 +217,19 @@
 
     <div id="modalHistory" class="modal" onclick="if(event.target===this) closeHistory()">
         <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2>History</h2>
-                <button onclick="clearHistory()" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer;">Clear All</button>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin-top:0">History</h2>
+                <button onclick="clearHistory()" style="background:none; border:none; color:red; font-size:0.9rem;">Clear</button>
             </div>
-            <ul id="historyList" class="history-list">
-                </ul>
+            <ul id="historyList" class="history-list"></ul>
             <button class="btn btn-secondary close-btn-full" onclick="closeHistory()">Close</button>
         </div>
     </div>
 
     <script>
-        // --- Logic ---
         let config = { biteTime: 3000, chewTime: 15000, restTime: 5000 };
-        let state = { isRunning: false, isPaused: false, phase: 'idle', bites: 0, totalSeconds: 0, timerInterval: null, phaseTimeout: null };
-
+        let state = { isRunning: false, isPaused: false, bites: 0, totalSeconds: 0, timerInterval: null, phaseTimeout: null };
+        
         const els = {
             container: document.getElementById('appContainer'),
             mainText: document.getElementById('mainText'),
@@ -366,26 +252,24 @@
         function startMeal() {
             state.isRunning = true; state.isPaused = false; state.bites = 0; state.totalSeconds = 0;
             updateStats();
-            els.btnMain.innerText = "Pause";
-            els.btnMain.className = "btn btn-secondary";
+            els.btnMain.innerText = "Pause"; els.btnMain.className = "btn btn-secondary";
             els.btnFinish.style.display = "block";
+            
+            if(state.timerInterval) clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => { state.totalSeconds++; updateStats(); }, 1000);
             runPhase('bite');
         }
 
         function pauseMeal() {
             state.isPaused = true; clearTimeout(state.phaseTimeout);
-            els.btnMain.innerText = "Resume";
-            els.btnMain.className = "btn btn-primary";
-            els.mainText.innerText = "Paused";
-            els.subText.innerText = "Take a breath";
+            els.btnMain.innerText = "Resume"; els.btnMain.className = "btn btn-primary";
+            els.mainText.innerText = "Paused"; els.subText.innerText = "Take a breath";
             els.container.className = "state-rest";
         }
 
         function resumeMeal() {
             state.isPaused = false;
-            els.btnMain.innerText = "Pause";
-            els.btnMain.className = "btn btn-secondary";
+            els.btnMain.innerText = "Pause"; els.btnMain.className = "btn btn-secondary";
             runPhase('bite');
         }
 
@@ -393,37 +277,25 @@
             saveHistory();
             clearInterval(state.timerInterval); clearTimeout(state.phaseTimeout);
             state.isRunning = false; state.isPaused = false;
-            els.btnMain.innerText = "Start Meal";
-            els.btnMain.className = "btn btn-primary";
+            els.btnMain.innerText = "Start Meal"; els.btnMain.className = "btn btn-primary";
             els.btnFinish.style.display = "none";
             els.container.className = "state-rest";
-            els.mainText.innerText = "Meal Done";
-            els.subText.innerText = "Great job!";
+            els.mainText.innerText = "Meal Done"; els.subText.innerText = "Great job!";
         }
 
         function runPhase(phase) {
             if (!state.isRunning || state.isPaused) return;
-            state.phase = phase;
+            let duration = phase === 'bite' ? config.biteTime : phase === 'chew' ? config.chewTime : config.restTime;
 
             if (phase === 'bite') {
-                els.container.className = "state-bite";
-                els.mainText.innerText = "Take a Bite";
-                els.subText.innerText = "Pick up food";
-                vibrate(100);
-                state.phaseTimeout = setTimeout(() => {
-                    state.bites++; updateStats(); runPhase('chew');
-                }, config.biteTime);
+                els.container.className = "state-bite"; els.mainText.innerText = "Take a Bite"; els.subText.innerText = "Pick up food";
+                state.phaseTimeout = setTimeout(() => { state.bites++; updateStats(); runPhase('chew'); }, duration);
             } else if (phase === 'chew') {
-                els.container.className = "state-chew";
-                els.mainText.innerText = "Chew";
-                els.subText.innerText = "Match the rhythm";
-                state.phaseTimeout = setTimeout(() => { runPhase('rest'); }, config.chewTime);
+                els.container.className = "state-chew"; els.mainText.innerText = "Chew"; els.subText.innerText = "Match the rhythm";
+                state.phaseTimeout = setTimeout(() => { runPhase('rest'); }, duration);
             } else if (phase === 'rest') {
-                els.container.className = "state-rest";
-                els.mainText.innerText = "Swallow";
-                els.subText.innerText = "& Breathe...";
-                vibrate([50, 50, 50]);
-                state.phaseTimeout = setTimeout(() => { runPhase('bite'); }, config.restTime);
+                els.container.className = "state-rest"; els.mainText.innerText = "Swallow"; els.subText.innerText = "& Breathe...";
+                state.phaseTimeout = setTimeout(() => { runPhase('bite'); }, duration);
             }
         }
 
@@ -434,43 +306,15 @@
             els.dispTime.innerText = `${m}:${s}`;
         }
 
-        function vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
-
-        // Modal Functions
         function openSettings() { document.getElementById('modalSettings').classList.add('active'); }
-        function closeSettings() { 
-            document.getElementById('modalSettings').classList.remove('active'); 
-            config.chewTime = parseInt(els.chewRange.value) * 1000;
-        }
+        function closeSettings() { document.getElementById('modalSettings').classList.remove('active'); config.chewTime = parseInt(els.chewRange.value) * 1000; }
         function updateSettingsUI() { els.chewValue.innerText = els.chewRange.value + "s"; }
-
         function openHistory() { document.getElementById('modalHistory').classList.add('active'); renderHistory(); }
         function closeHistory() { document.getElementById('modalHistory').classList.remove('active'); }
-        
         function openHelp() { document.getElementById('modalHelp').classList.add('active'); }
         function closeHelp() { document.getElementById('modalHelp').classList.remove('active'); }
-
-        function saveHistory() {
-            if (state.bites === 0) return;
-            const history = JSON.parse(localStorage.getItem('savorHistory') || '[]');
-            const session = { date: new Date().toLocaleString(), bites: state.bites, duration: state.totalSeconds };
-            history.unshift(session);
-            if(history.length > 20) history.pop();
-            localStorage.setItem('savorHistory', JSON.stringify(history));
-        }
-
-        function renderHistory() {
-            const history = JSON.parse(localStorage.getItem('savorHistory') || '[]');
-            els.historyList.innerHTML = history.length ? '' : '<li style="text-align:center;color:#999;padding:20px;">No meals yet.</li>';
-            history.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                const d = item.date.split(',');
-                const mins = Math.floor(item.duration / 60);
-                li.innerHTML = `<span><strong>${d[0]}</strong><br>${d[1]}</span><span style="text-align:right;">${item.bites} bites<br>${mins} mins</span>`;
-                els.historyList.appendChild(li);
-            });
-        }
+        function saveHistory() { if(state.bites===0)return; let h=JSON.parse(localStorage.getItem('savorHistory')||'[]'); h.unshift({date:new Date().toLocaleString(), bites:state.bites, duration:state.totalSeconds}); if(h.length>20)h.pop(); localStorage.setItem('savorHistory',JSON.stringify(h)); }
+        function renderHistory() { let h=JSON.parse(localStorage.getItem('savorHistory')||'[]'); els.historyList.innerHTML = h.length ? '' : '<li style="text-align:center;color:#999;padding:20px;">No meals yet.</li>'; h.forEach(i=>{ els.historyList.innerHTML+=`<li class="history-item"><span>${i.date.split(',')[1]}</span><span>${i.bites} bites</span></li>` }); }
         function clearHistory() { localStorage.removeItem('savorHistory'); renderHistory(); }
     </script>
 </body>
