@@ -311,6 +311,48 @@
         }
         .btn-outline { background: #fff; border: 2px solid #eee; color: #999; }
         .btn-fill { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(78, 204, 163, 0.4); }
+        /* === 3. 新增：文本框样式 (Soft Note Style) === */
+        .survey-textarea {
+            width: 100%;
+            height: 80px;
+            background: #fff;       /* 纯白纸张感 */
+            border: 2px solid #ebdccc; /* 配合标签的奶茶色边框 */
+            border-radius: 16px;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: #5d4037;
+            resize: none; /* 禁止拖拽改变大小 */
+            outline: none;
+            box-sizing: border-box; /* 防止边框撑开布局 */
+            margin-bottom: 5px;
+            transition: 0.3s;
+            line-height: 1.5;
+        }
+
+        .survey-textarea::placeholder {
+            color: #d7ccc8; /* 浅咖色提示文字 */
+        }
+
+        .survey-textarea:focus {
+            border-color: var(--primary); /* 聚焦时变绿 */
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.15);
+            background: #f0fdf9; /* 极淡的绿色背景 */
+        }
+
+        /* 底部腾讯问卷的小链接样式 */
+        .tencent-link-btn {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
     </style>
 </head>
 <body>
@@ -356,16 +398,28 @@
     </div>
     <div id="modalSettings" class="modal" onclick="if(event.target===this) closeModals()">
         <div class="modal-content">
-            <h2>设置</h2>
-            <div class="slider-group">
-                <div id="rangeBubble" class="range-bubble">30秒</div>
-                <div class="slider-wrapper">
-                    <span>10s</span>
-                    <input type="range" id="chewRange" min="10" max="100" value="30" oninput="updateSettingsUI()">
-                    <span>100s</span>
+            <!-- 标题：改为左对齐 + 修改文案 -->
+            <h2 style="text-align: left; margin-bottom: 35px; margin-top: 5px;">咀嚼次数（秒）</h2>
+            
+            <div class="slider-group" style="margin: 0 0 30px 0;">
+                <div class="slider-wrapper" style="gap:15px; align-items: center;">
+                    <span style="font-size: 0.85rem; color: #94a3b8; width: 30px; text-align:right;">10s</span>
+                    
+                    <!-- 相对定位容器：用于精确绑定气泡和滑块 -->
+                    <div style="flex: 1; position: relative; height: 30px; display: flex; align-items: center;">
+                        
+                        <!-- 气泡：移除 left:50% 的硬编码，稍后由 JS 控制 -->
+                        <div id="rangeBubble" class="range-bubble" style="bottom: 35px; margin: 0; left: 0;">30秒</div>
+                        
+                        <input type="range" id="chewRange" min="10" max="100" value="30" oninput="updateSettingsUI()" style="width: 100%; margin: 0; display:block;">
+                    </div>
+
+                    <span style="font-size: 0.85rem; color: #94a3b8; width: 35px;">100s</span>
                 </div>
             </div>
-            <p style="text-align:center; color:#999; font-size:0.9rem;">每次咀嚼的时长</p>
+            
+            <!-- 移除了下方多余的小字说明 -->
+            
             <button class="close-btn-full" onclick="closeModals()">保存</button>
         </div>
     </div>
@@ -393,7 +447,7 @@
                 <!-- Dribbble 风格卡片组 -->
                 <div class="gratuity-row">
                     <!-- 1元：柠檬黄主题 -->
-                    <div class="g-card g-card-1" onclick="toPay(1)">
+                    <div class="g-card g-card-1" onclick="toPay(3)">
                 
                         <div class="g-price">3元</div>
                         <div class="g-label">支持</div>
@@ -420,11 +474,11 @@
             </div>
 
             <!-- 页面2: 扫码支付页 -->
+            <!-- 页面2: 扫码支付页 -->
             <div id="pagePay">
                 
-                <!-- 价格文字上移至顶部 -->
                 <div class="pay-header">
-                    请扫码支付 <span class="pay-amount-text" id="payAmount">1.00</span> 元
+                    请扫码支付 <span class="pay-amount-text" id="payAmount">3.00</span> 元
                 </div>
 
                 <div class="pay-tabs">
@@ -435,44 +489,60 @@
                 <div class="qr-box">
                     <img id="qrImg" src="./images/ali.jpg" class="qr-img">
                 </div>
-
+                
                 <div class="verify-alert">
                     付款校验实名：<span id="payName" style="font-weight:bold">*洁</span>
                 </div>
 
-                <div style="display:flex; gap:10px; width:100%; margin-top:25px;">
+                <!-- ★ 新增：截图扫码提示语 ★ -->
+                <p id="saveQRHint" style="font-size:0.8rem; color:#94a3b8; text-align:center; margin:15px 0 5px 0; line-height:1.4;">
+                    手机端请截图保存收款码后，<br>用支付宝扫一扫付款
+                </p>
+
+                <div style="display:flex; gap:10px; width:100%; margin-top:15px;">
                     <button class="close-btn-full" style="margin:0; background:white; border:1px solid #e2e8f0; color:#64748b;" onclick="showPage('pageSelect')">返回</button>
                     <button class="close-btn-full" style="margin:0; background:#333; color:white; border:1px solid #333;" onclick="fullFinish()">已完成支付</button>
                 </div>
             </div>
 
             <!-- 页面3: 问卷调查页 -->
+            <!-- 页面3: 问卷调查页 -->
             <div id="pageSurvey" style="display:none;">
-                <h3 style="margin-bottom:5px;">建议反馈</h3>
-                <p style="color:#999; font-size:0.8rem; text-align:center;">您的意见非常重要</p>
+                <h3 style="color:#5d4037; margin-bottom:5px;">建议反馈</h3>
+                <p style="color:#bcaaa4; font-size:0.8rem; text-align:center;">您的每一条意见我们都会认真看~</p>
                 
-                <label class="survey-q-title">1. 您希望这款工具帮您解决什么？(多选)</label>
+                <!-- 问题 1 -->
+                <label class="survey-q-title">1. 您希望解决什么问题？(多选)</label>
                 <div class="tags-wrapper" id="tagsQ1">
                     <span class="survey-tag" onclick="toggleTag(this)">减肥瘦身</span>
                     <span class="survey-tag" onclick="toggleTag(this)">控制进食速度</span>
-                    <span class="survey-tag" onclick="toggleTag(this)">改善消化(胃不适)</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">缓解胃胀</span>
                     <span class="survey-tag" onclick="toggleTag(this)">正念饮食</span>
-                    <span class="survey-tag" onclick="toggleTag(this)">只是好奇试用</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">单纯好奇</span>
                 </div>
 
-                <label class="survey-q-title">2. 您目前的使用感受如何？(单选)</label>
+                <!-- 问题 2 -->
+                <label class="survey-q-title">2. 目前的节奏感受如何？(单选)</label>
                 <div class="tags-wrapper" id="tagsQ2">
                     <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">非常有帮助</span>
-                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">体验很舒适</span>
-                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">过于简单/无聊</span>
-                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">节奏很难跟随</span>
-                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">没什么用</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">节奏很舒服</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">节奏太慢了</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">节奏太快了</span>
                 </div>
 
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button class="close-btn-full" style="margin:0; background:white; border:1px solid #ddd;" onclick="showPage('pageSelect')">取消</button>
-                    <button class="close-btn-full" style="margin:0; background:var(--primary); color:white;" onclick="submitSurvey()">提交反馈</button>
+                <!-- ★★★ 问题 3 (新增) ★★★ -->
+                <label class="survey-q-title">3. 还有什么想说的？</label>
+                <textarea id="txtQ3" class="survey-textarea" placeholder="任何功能建议或吐槽..."></textarea>
+
+                <!-- 底部按钮 -->
+                <div style="display:flex; gap:12px; margin-top:20px;">
+                    <button class="modal-action-btn btn-outline" onclick="showPage('pageSelect')">返回</button>
+                    <!-- 点击此按钮将生成邮件 -->
+                    <button class="modal-action-btn btn-fill" onclick="submitSurvey()">生成邮件反馈</button>
                 </div>
+                
+                <!-- 链接到您的腾讯问卷 -->
+                <button class="tencent-link-btn" onclick="openExternalSurvey()">跳转到网页版问卷 ></button>
             </div>
 
         </div>
@@ -522,21 +592,37 @@
         }
 
         // 支付逻辑
+        // 支付逻辑 - 更新版
         function toPay(amt) {
             document.getElementById('payAmount').innerText = amt + ".00";
-            switchPay('ali'); // 默认阿里
+            // 默认进入时重置为支付宝，并调用 switchPay 更新文字
+            switchPay('ali'); 
             showPage('pagePay');
         }
+
         function switchPay(type) {
+            // 重置 Tab 按钮状态
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            // 获取需要操作的 DOM 元素
+            const qrImg = document.getElementById('qrImg');
+            const payName = document.getElementById('payName');
+            const hintText = document.getElementById('saveQRHint'); // 获取提示语标签
+
             if(type === 'ali') {
+                // === 切换到支付宝 ===
                 document.getElementById('btnAli').classList.add('active');
-                document.getElementById('qrImg').src = './images/ali.jpg';
-                document.getElementById('payName').innerText = '*洁';
+                qrImg.src = './images/ali.jpg';
+                payName.innerText = '*洁';
+                // ★ 更新提示语
+                hintText.innerHTML = '手机端请截图保存收款码后，<br>用 <b>支付宝</b> 扫一扫付款';
             } else {
+                // === 切换到微信 ===
                 document.getElementById('btnWx').classList.add('active');
-                document.getElementById('qrImg').src = './images/wx.jpg';
-                document.getElementById('payName').innerText = '杨杨(*洁)';
+                qrImg.src = './images/wx.jpg';
+                payName.innerText = '杨杨(*洁)';
+                // ★ 更新提示语
+                hintText.innerHTML = '手机端请截图保存收款码后，<br>用 <b>微信</b> 扫一扫付款';
             }
         }
 
@@ -548,28 +634,80 @@
             el.classList.add('active'); // 单选
         }
         
-        function submitSurvey() {
-            // 获取数据
-            let q1 = []; document.querySelectorAll('#tagsQ1 .survey-tag.active').forEach(t=>q1.push(t.innerText));
-            let q2 = []; document.querySelectorAll('#tagsQ2 .survey-tag.active').forEach(t=>q2.push(t.innerText));
-            
-            if(q1.length===0 && q2.length===0) { alert('请至少选择一项哦'); return; }
+        /* 问卷新逻辑：支持跳转 URL + 获取文本框内容 */
+        function openExternalSurvey() {
+            // 直接在新窗口打开您提供的腾讯问卷链接
+            window.open('https://wj.qq.com/s2/24989756/6be9/', '_blank');
+        }
 
+        function submitSurvey() {
+            // 获取 Tag 数据
+            let q1 = []; 
+            document.querySelectorAll('#tagsQ1 .survey-tag.active').forEach(t=>q1.push(t.innerText));
+            let q2 = []; 
+            document.querySelectorAll('#tagsQ2 .survey-tag.active').forEach(t=>q2.push(t.innerText));
+            
+            // ★ 获取文本框数据
+            let q3Text = document.getElementById('txtQ3').value;
+
+            // 如果全部为空，提示一下
+            if(q1.length === 0 && q2.length === 0 && !q3Text.trim()) { 
+                alert('还是写点什么再走吧~'); 
+                return; 
+            }
+
+            // 构建邮件内容
             const subject = "Chewing 用户反馈";
-            const body = `Chewing 反馈:\n\n1. 希望解决的问题:\n${q1.join(', ') || '无'}\n\n2. 使用感受:\n${q2.join(', ') || '无'}`;
+            const body = 
+`Chewing 反馈报告:
+-------------------------
+1. 希望解决:
+${q1.join(', ') || '未选择'}
+
+2. 使用感受:
+${q2.join(', ') || '未选择'}
+
+3. 详细建议:
+${q3Text || '无'}
+-------------------------
+(自动生成，点击发送即可)`;
             
             // 拉起邮箱
             window.location.href = `mailto:2753669992@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
-            // 稍后自动关闭
-            setTimeout(() => { fullFinish(); alert('邮件已生成，请发送。感谢您的反馈！'); }, 1000);
+            // 简单的 UI 反馈
+            setTimeout(() => { 
+                alert('已为您生成邮件草稿，请在邮件 App 中点击发送。\n或者您可以点击底部的链接填写在线问卷。'); 
+                // 可选：发送后是否自动跳转回结束页？目前保留在问卷页方便用户查看
+            }, 800);
         }
 
         // 杂项
         function saveHistory() { if(state.bites===0)return; let h=JSON.parse(localStorage.getItem('savorHistory')||'[]'); h.unshift({date:new Date().toLocaleString('zh-CN'), bites:state.bites, duration:state.totalSeconds}); if(h.length>20)h.pop(); localStorage.setItem('savorHistory',JSON.stringify(h)); }
         function openSettings(){document.getElementById('modalSettings').classList.add('active'); updateSettingsUI();}
         function closeModals(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active'));}
-        function updateSettingsUI(){const r=document.getElementById('chewRange'); document.getElementById('rangeBubble').innerText=r.value+'秒'; config.chewTime = r.value*1000; }
+        function updateSettingsUI() {
+            const range = document.getElementById('chewRange');
+            const bubble = document.getElementById('rangeBubble');
+            
+            const val = parseInt(range.value);
+            const min = parseInt(range.min);
+            const max = parseInt(range.max);
+            
+            // 1. 更新数值文本
+            bubble.innerText = val + '秒'; 
+            
+            // 2. 更新配置
+            config.chewTime = val * 1000; 
+
+            // 3. 计算百分比位置 (0 - 100)
+            const percent = ((val - min) * 100) / (max - min);
+            
+            // 4. 设置气泡位置：
+            // percent + "%" 定位气泡左侧边缘到滑块中心位置
+            // translateX(-50%) 在 CSS 中负责将气泡自身居中
+            bubble.style.left = percent + "%"; 
+        }
         function openHistory(){let l=document.getElementById('historyList'); l.innerHTML=''; JSON.parse(localStorage.getItem('savorHistory')||'[]').forEach(i=>l.innerHTML+=`<li class="history-item"><span>${i.date}</span><span>${i.bites}口</span></li>`); document.getElementById('modalHistory').classList.add('active');}
         function clearHistory(){localStorage.removeItem('savorHistory'); openHistory();}
         function openHelp(){document.getElementById('modalHelp').classList.add('active');}
