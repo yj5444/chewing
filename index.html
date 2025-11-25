@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Chewing 慢食伴侣</title>
     <style>
+        /* === 1. 恢复原版风格 CSS === */
         :root {
             --primary: #4ecca3;
             --focus: #3b82f6;
@@ -12,94 +13,38 @@
             --bg: #f8fafc;
             --text: #1e293b;
             --card: #ffffff;
+            --gray-btn: #f1f5f9;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans CN", "Noto Sans SC", sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100dvh; 
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            margin: 0; padding: 0;
+            background-color: var(--bg); color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+            display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* 顶部 */
         header {
-            padding: 15px 20px;
-            padding-top: max(15px, env(safe-area-inset-top)); 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            z-index: 100;
-            flex-shrink: 0;
+            padding: 15px 20px; padding-top: max(15px, env(safe-area-inset-top)); 
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100; flex-shrink: 0;
         }
         h1 { margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; letter-spacing: 0.5px; }
-        
         .header-right { display: flex; gap: 15px; }
-        .icon-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 5px; opacity: 0.7; transition: opacity 0.2s; }
+        .icon-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 5px; opacity: 0.7; }
 
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            width: 100%;
-        }
+        /* 主体圆环 - 保持原样 */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; }
 
-        .stats-pill {
-            position: absolute;
-            top: 20px;
-            background: rgba(0,0,0,0.05);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #666;
-            letter-spacing: 0.3px;
-        }
+        .stats-pill { position: absolute; top: 20px; background: rgba(0,0,0,0.05); padding: 8px 16px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; color: #666; }
+        .circle-container { width: min(260px, 70vw); height: min(260px, 70vw); position: relative; display: flex; justify-content: center; align-items: center; }
+        .circle-bg { width: 100%; height: 100%; border-radius: 50%; background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.08); position: absolute; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .circle-inner { width: 90%; height: 90%; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; transition: background-color 0.5s ease; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .instruction-main { font-size: 1.8rem; font-weight: 600; text-align: center; }
+        .instruction-sub { font-size: 1rem; opacity: 0.9; margin-top: 8px; }
 
-        .circle-container {
-            width: min(260px, 70vw);
-            height: min(260px, 70vw);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .circle-bg {
-            width: 100%; height: 100%; border-radius: 50%; background: #fff;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            position: absolute;
-            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .circle-inner {
-            width: 90%; height: 90%; border-radius: 50%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 2; transition: background-color 0.5s ease;
-        }
-
-        .instruction-main {
-            font-size: 1.8rem;
-            font-weight: 600; 
-            color: white;
-            text-align: center;
-            line-height: 1.2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            letter-spacing: 1px;
-        }
-        .instruction-sub { font-size: 1rem; color: rgba(255,255,255,0.9); margin-top: 8px; letter-spacing: 0.5px; font-weight: 400; }
-
+        /* 状态动画 */
         .state-bite .circle-bg { transform: scale(1); }
         .state-bite .circle-inner { background-color: var(--primary); }
         .state-chew .circle-inner { background-color: var(--focus); }
@@ -108,24 +53,19 @@
         .state-rest .circle-inner { background-color: var(--rest); }
         @keyframes pulseJaw { from { transform: scale(1); } to { transform: scale(1.15); } }
 
+        /* 底部控制 */
         .control-bar {
             background: var(--card); display: flex; justify-content: center; gap: 20px;
             border-radius: 30px 30px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); flex-shrink: 0;
             padding: 30px; padding-bottom: max(30px, env(safe-area-inset-bottom) + 20px);
         }
-
-        .btn {
-            padding: 15px 30px; border-radius: 50px; border: none;
-            font-size: 1.1rem; font-weight: 600; cursor: pointer;
-            transition: transform 0.1s; width: 140px;
-            letter-spacing: 1px;
-        }
+        .btn { padding: 15px 30px; border-radius: 50px; border: none; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s; min-width: 140px; letter-spacing: 1px; }
         .btn:active { transform: scale(0.96); }
         .btn-primary { background: #333; color: white; }
         .btn-secondary { background: #e2e8f0; color: #333; }
         .btn-danger { background: #fee2e2; color: #ef4444; }
 
-        /* --- 弹窗样式 --- */
+        /* Modal 基础样式 (原版) */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); display: none;
@@ -134,45 +74,253 @@
         .modal.active { display: flex; }
         .modal-content {
             background: white; width: 85%; max-width: 400px; border-radius: 24px; padding: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: fadeInScale 0.25s ease-out;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: fadeInScale 0.25s ease-out; position: relative;
         }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .close-btn-full { width: 100%; margin-top: 20px; padding: 12px; background: #eee; border:none; border-radius:12px; color:#555;}
         
-        h2 { margin-top: 0; font-weight: 600; letter-spacing: 0.5px; }
+        h2 { margin-top: 0; font-weight: 600; text-align: center; margin-bottom: 20px;}
         
-        /* 气泡跟随滑块设计 */
-        .slider-group { position: relative; margin-top: 40px; margin-bottom: 10px; }
-        .slider-wrapper { display: flex; align-items: center; gap: 15px; color: #999; font-size: 0.9rem; position: relative; }
-        .range-bubble {
-            position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%);
-            background-color: var(--primary); color: white; padding: 4px 10px;
-            border-radius: 12px; font-size: 0.9rem; font-weight: 600; white-space: nowrap; pointer-events: none;
-            box-shadow: 0 4px 10px rgba(78, 204, 163, 0.3);
-        }
-        .range-bubble::after {
-            content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px;
-            border-width: 5px; border-style: solid; border-color: var(--primary) transparent transparent transparent;
-        }
-        .setting-header { margin-bottom: 5px; }
-        input[type=range] { flex: 1; accent-color: var(--primary); cursor: pointer; width: 100%; }
-        
-        .history-list { max-height: 300px; overflow-y: auto; list-style: none; padding: 0; }
-        .history-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .close-btn-full { width: 100%; margin-top: 20px; }
-        .help-step { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        .step-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 5px; margin-right: 12px; flex-shrink: 0; }
-        .dot-green { background: var(--primary); } .dot-blue { background: var(--focus); } .dot-orange { background: var(--rest); }
+        /* 历史和设置样式的辅助 CSS */
+        .slider-group { position: relative; margin: 40px 0 20px 0; }
+        .slider-wrapper { display: flex; align-items: center; gap: 15px; color: #999; font-size: 0.9rem; }
+        input[type=range] { flex: 1; accent-color: var(--primary); width: 100%; }
+        .range-bubble { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; pointer-events: none; }
+        .history-list { max-height: 300px; overflow-y: auto; list-style: none; padding: 0; margin-top: 10px; }
+        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 
+        /* === 2. 修改：打赏与问卷的 CSS === */
+        
+        /* === 2. 全新 Dribbble 风格：打赏页 === */
+        
+        /* 这里的 modal-content 需要覆盖原有的白色背景 */
+        /* 通过具体的ID选择器来提升优先级，营造温馨氛围 */
+        #modalGratuity .modal-content {
+            background: #fffdf5; /* 奶油暖米色 */
+            border-radius: 32px; /* 更大的圆角，更有亲和力 */
+            padding: 35px 25px;
+            box-shadow: 
+                0 20px 60px rgba(255, 159, 67, 0.15), /* 暖橙色环境光 */
+                0 10px 20px rgba(0,0,0,0.05);
+            border: 4px solid #fff; /* 内白边，增加精致感 */
+        }
+        
+        #pageSelect h2 {
+            color: #5d4037; /* 暖咖啡色标题 */
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .warm-subtitle {
+            text-align: center;
+            color: #a1887f; /* 浅咖啡色 */
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* 布局容器 */
+        .gratuity-row {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr 1fr; /* 中间稍大 */
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: stretch;
+        }
+
+        /* 基础卡片样式 - 拟态/气泡感 */
+        .g-card {
+            position: relative;
+            background: #fff;
+            border-radius: 24px;
+            padding: 15px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 弹性果冻动画 */
+            border: 2px solid transparent;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.03), 
+                inset 0 0 0 1px rgba(255,255,255,0.8);
+            overflow: hidden;
+        }
+
+        /* 鼠标悬停时的通效：上浮+投影加深 */
+        .g-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+
+        /* active点击态 */
+        .g-card:active { transform: scale(0.95); }
+
+        /* === 贴纸风格的 3D 图标 === */
+        .sticker-icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            /* 让Emoji看起来有厚度和投影 */
+            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.15)); 
+            transform: rotate(-5deg); /* 俏皮的一点点歪 */
+            transition: transform 0.3s;
+        }
+        .g-card:hover .sticker-icon { transform: rotate(5deg) scale(1.1); }
+
+        .g-price { font-size: 1.8rem; font-weight: 800; color: #5d4037; margin-bottom: 2px; }
+        .g-label { font-size: 1.3rem; color: #bcaaa4; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* --- 风格 1：小打赏 (星星/柠檬) --- */
+        .g-card-1 {
+            background: linear-gradient(135deg, #fff 0%, #fffde7 100%); /* 淡黄 */
+            border: 1px solid rgba(255, 241, 118, 0.3);
+        }
+        .g-card-1:hover { border-color: #fdd835; }
+        .g-card-1 .g-price { color: #f9a825; }
+
+        /* --- 风格 2：大爱心 (推荐) --- */
+        .g-card-9 {
+            background: linear-gradient(135deg, #fff0f3 0%, #fff 100%); /* 淡粉渐变 */
+            border: 2px solid #ffcdd2; /* 默认有淡粉框 */
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.15); /* 粉色光晕 */
+        }
+        /* 选中/推荐的高亮状态 */
+        .g-card-9:hover {
+            border-color: #ff4081; /* 鲜艳粉 */
+            background: linear-gradient(135deg, #ffeef4 0%, #fff 100%);
+        }
+        .g-card-9 .g-price { color: #e91e63; font-size: 1.8rem; }
+        .g-card-9 .g-label { color: #f48fb1; font-size: 1.3rem;}
+
+        /* --- 风格 3：问卷 (素雅) --- */
+        .g-card-survey {
+            background: #f1f5f9;
+        }
+        .g-card-survey:hover { background: #e2e8f0; border-color: #cbd5e1;}
+        .g-card-survey .g-price { color: #64748b; font-weight: 600; font-size: 1rem; }
+        .g-card-survey .g-label { color: #94a3b8; }
+
+        /* 底部“跳过”按钮重写 */
+        .btn-text-only {
+            background: transparent;
+            color: #bcaaa4;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: color 0.2s;
+        }
+        .btn-text-only:hover { color: #8d6e63; }
+
+        /* 扫码页简单布局 */
+        /* === 3. 优化后的扫码页 CSS === */
+        #pagePay { display: none; flex-direction: column; align-items: center; padding-top: 10px; }
+        
+        /* 价格主标题 */
+        .pay-header { font-size: 1rem; color: #666; margin-bottom: 15px; text-align: center; }
+        .pay-amount-text { color: #1e293b; font-size: 1.5rem; font-weight: 700; font-family: -apple-system, sans-serif; }
+
+        /* 支付方式切换 Tabs */
+        .pay-tabs { display: flex; gap: 12px; margin-bottom: 5px; background: #f1f5f9; padding: 4px; border-radius: 25px; }
+        .tab-btn { 
+            padding: 8px 24px; border: none; border-radius: 20px; 
+            background: transparent; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; color: #64748b; transition: 0.2s all;
+        }
+        .tab-btn.active { background: white; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* 二维码容器 - 更加清晰大方 */
+        .qr-box { 
+            width: 220px; height: 220px; /* 加大尺寸，显示更清晰 */
+            background: white; 
+            padding: 10px; 
+            border: 1px solid #f0f0f0; 
+            border-radius: 16px; 
+            margin: 20px 0; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06); /* 添加悬浮阴影 */
+            display: flex; align-items: center; justify-content: center;
+        }
+        .qr-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; /* 保证图片比例不被拉伸，完整显示 */
+            display: block; 
+            image-rendering: -webkit-optimize-contrast; /* 尝试优化图片渲染 */
+        }
+        
+        .verify-alert { font-size: 0.85rem; background: #fff7ed; color: #c2410c; padding: 8px 12px; border-radius: 8px; font-weight: 500;}
+        /* === 修复：问卷与按钮样式 (Dribbble 风格适配) === */
+        
+        /* 问卷问题标题 */
+        .survey-q-title { 
+            display: block; 
+            margin: 25px 0 12px 0; 
+            font-weight: 700; 
+            color: #5d4037; /* 深咖色，增加阅读重力 */
+            font-size: 0.95rem; 
+        }
+
+        /* 标签容器 */
+        .tags-wrapper { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        
+        /* 标签胶囊 - 默认状态 */
+        .survey-tag {
+            padding: 10px 18px;
+            background: #fff;       /* 白色背景 */
+            border: 2px solid #ebdccc; /* 浅奶茶色边框 */
+            border-radius: 50px;    /* 圆润胶囊 */
+            color: #8d6e63;         /* 文字颜色 */
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            user-select: none;
+            display: inline-block; /* 修复换行问题 */
+        }
+        
+        /* 鼠标悬停 */
+        .survey-tag:hover {
+            border-color: #d7ccc8;
+            transform: translateY(-2px);
+        }
+
+        /* 标签选中状态 (Active) - 变为品牌绿色 */
+        .survey-tag.active {
+            background: var(--primary); /* 绿色背景 */
+            color: white;               /* 白字 */
+            border-color: var(--primary);
+            box-shadow: 0 8px 15px rgba(78, 204, 163, 0.35); /* 绿色投影 */
+            transform: scale(1.05); /* 稍微变大，增加确认感 */
+        }
+
+        /* 修复底部的按钮显示 */
+        .modal-action-btn {
+            width: 100%; padding: 12px; margin: 0; 
+            border-radius: 12px; font-weight: bold; cursor: pointer; border: none;
+            font-size: 0.95rem; transition: 0.2s;
+        }
+        .btn-outline { background: #fff; border: 2px solid #eee; color: #999; }
+        .btn-fill { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(78, 204, 163, 0.4); }
     </style>
 </head>
 <body>
 
     <header>
-        <button class="icon-btn" onclick="openHistory()" aria-label="History">📊</button>
+        <button class="icon-btn" onclick="openHistory()">📊</button>
         <h1>Chewing</h1>
         <div class="header-right">
-            <button class="icon-btn" onclick="openHelp()" aria-label="Help">❔</button>
-            <button class="icon-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+            <button class="icon-btn" onclick="openHelp()">❔</button>
+            <button class="icon-btn" onclick="openSettings()">⚙️</button>
         </div>
     </header>
 
@@ -180,7 +328,6 @@
         <div class="stats-pill">
             口数: <span id="dispBites">0</span> | 时长: <span id="dispTime">00:00</span>
         </div>
-
         <div class="circle-container">
             <div class="circle-bg"></div>
             <div class="circle-inner">
@@ -192,128 +339,240 @@
 
     <div class="control-bar">
         <button id="btnMain" class="btn btn-primary" onclick="toggleState()">开始用餐</button>
-        <button id="btnFinish" class="btn btn-danger" style="display:none;" onclick="finishMeal()">结束用餐</button>
+        <button id="btnFinish" class="btn btn-danger" style="display:none;" onclick="preFinishMeal()">结束用餐</button>
     </div>
 
-    <div id="modalHelp" class="modal" onclick="if(event.target===this) closeHelp()">
+    <!-- 原有基础弹窗（无修改） -->
+    <div id="modalHelp" class="modal" onclick="if(event.target===this) closeModals()">
         <div class="modal-content">
             <h2>使用说明</h2>
-            <div class="help-step"><div class="step-dot dot-green"></div><div><strong>1. 进食 (绿色)</strong><span>拿起食物放入口中。</span></div></div>
-            <div class="help-step"><div class="step-dot dot-blue"></div><div><strong>2. 咀嚼 (蓝色脉动)</strong><span>跟随圆圈的呼吸节奏咀嚼。</span></div></div>
-            <div class="help-step"><div class="step-dot dot-orange"></div><div><strong>3. 休息 (橙色)</strong><span>吞咽食物，放下餐具深呼吸。</span></div></div>
-            <button class="btn btn-secondary close-btn-full" onclick="closeHelp()">知道了</button>
+            <div style="line-height:1.8; color:#666;">
+                <p>1. <strong>进食 (绿)</strong>: 放入一口食物。</p>
+                <p>2. <strong>咀嚼 (蓝)</strong>: 跟着圆圈节奏咀嚼。</p>
+                <p>3. <strong>休息 (橙)</strong>: 吞咽，深呼吸。</p>
+            </div>
+            <button class="close-btn-full" onclick="closeModals()">关闭</button>
         </div>
     </div>
-
-    <div id="modalSettings" class="modal" onclick="if(event.target===this) closeSettings()">
+    <div id="modalSettings" class="modal" onclick="if(event.target===this) closeModals()">
         <div class="modal-content">
             <h2>设置</h2>
-            
-            <div style="margin-bottom: 25px;">
-                <div class="setting-header">
-                    <label><strong>咀嚼时间</strong></label>
+            <div class="slider-group">
+                <div id="rangeBubble" class="range-bubble">30秒</div>
+                <div class="slider-wrapper">
+                    <span>10s</span>
+                    <input type="range" id="chewRange" min="10" max="100" value="30" oninput="updateSettingsUI()">
+                    <span>100s</span>
                 </div>
-                
-                <div class="slider-group">
-                    <div id="rangeBubble" class="range-bubble">30秒</div>
-                    
-                    <div class="slider-wrapper">
-                        <span>10s</span>
-                        <input type="range" id="chewRange" min="10" max="100" value="30" oninput="updateSettingsUI()">
-                        <span>100s</span>
-                    </div>
-                </div>
-                
-                <p style="font-size:0.8rem; color:#999; margin-top:20px;">调整每次咀嚼的时长/次数。</p>
             </div>
-
-            <button class="btn btn-primary close-btn-full" onclick="closeSettings()">保存</button>
+            <p style="text-align:center; color:#999; font-size:0.9rem;">每次咀嚼的时长</p>
+            <button class="close-btn-full" onclick="closeModals()">保存</button>
+        </div>
+    </div>
+    <div id="modalHistory" class="modal" onclick="if(event.target===this) closeModals()">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between;"><h2>记录</h2><button onclick="clearHistory()" style="color:red;border:none;background:none">清空</button></div>
+            <ul id="historyList" class="history-list"></ul>
+            <button class="close-btn-full" onclick="closeModals()">关闭</button>
         </div>
     </div>
 
-    <div id="modalHistory" class="modal" onclick="if(event.target===this) closeHistory()">
+    <!-- ★★★ 核心：打赏 / 支付 / 问卷弹窗 ★★★ -->
+    <div id="modalGratuity" class="modal">
         <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h2>用餐记录</h2>
-                <button onclick="clearHistory()" style="background:none; border:none; color:red; font-size:0.9rem;">清空</button>
+            
+            <!-- 页面1: 选择页 -->
+            <!-- 页面1: 选择页 (Redesign Version) -->
+            <div id="pageSelect">
+                <!-- 头部 -->
+                <h2>创作不易，打赏一下</h2>
+                <p class="warm-subtitle">
+                    如果您觉得这个应用有帮助，可以请我喝杯咖啡 🍪
+                </p>
+
+                <!-- Dribbble 风格卡片组 -->
+                <div class="gratuity-row">
+                    <!-- 1元：柠檬黄主题 -->
+                    <div class="g-card g-card-1" onclick="toPay(1)">
+                
+                        <div class="g-price">3元</div>
+                        <div class="g-label">支持</div>
+                    </div>
+                    
+                    <!-- 9元：重点推荐，爱心粉主题 -->
+                    <div class="g-card g-card-9" onclick="toPay(9)">
+                        <!-- 这里的 transform 用来制造更强烈的立体贴纸感 -->
+                        
+                        <div class="g-price">9 元</div>
+                        <div class="g-label">超赞</div>
+                    </div>
+
+                    <!-- 问卷：安静的气泡 -->
+                    <div class="g-card g-card-survey" onclick="toSurvey()">
+                        
+                        <div class="g-price">下次</div>
+                        <div class="g-label">反馈建议</div>
+                    </div>
+                </div>
+
+                <!-- 底部弱化按钮 -->
+                <button class="btn-text-only" onclick="fullFinish()">跳过，直接结束</button>
             </div>
-            <ul id="historyList" class="history-list"></ul>
-            <button class="btn btn-secondary close-btn-full" onclick="closeHistory()">关闭</button>
+
+            <!-- 页面2: 扫码支付页 -->
+            <div id="pagePay">
+                
+                <!-- 价格文字上移至顶部 -->
+                <div class="pay-header">
+                    请扫码支付 <span class="pay-amount-text" id="payAmount">1.00</span> 元
+                </div>
+
+                <div class="pay-tabs">
+                    <button class="tab-btn active" id="btnAli" onclick="switchPay('ali')">支付宝</button>
+                    <button class="tab-btn" id="btnWx" onclick="switchPay('wx')">微信支付</button>
+                </div>
+                
+                <div class="qr-box">
+                    <img id="qrImg" src="./images/ali.jpg" class="qr-img">
+                </div>
+
+                <div class="verify-alert">
+                    付款校验实名：<span id="payName" style="font-weight:bold">*洁</span>
+                </div>
+
+                <div style="display:flex; gap:10px; width:100%; margin-top:25px;">
+                    <button class="close-btn-full" style="margin:0; background:white; border:1px solid #e2e8f0; color:#64748b;" onclick="showPage('pageSelect')">返回</button>
+                    <button class="close-btn-full" style="margin:0; background:#333; color:white; border:1px solid #333;" onclick="fullFinish()">已完成支付</button>
+                </div>
+            </div>
+
+            <!-- 页面3: 问卷调查页 -->
+            <div id="pageSurvey" style="display:none;">
+                <h3 style="margin-bottom:5px;">建议反馈</h3>
+                <p style="color:#999; font-size:0.8rem; text-align:center;">您的意见非常重要</p>
+                
+                <label class="survey-q-title">1. 您希望这款工具帮您解决什么？(多选)</label>
+                <div class="tags-wrapper" id="tagsQ1">
+                    <span class="survey-tag" onclick="toggleTag(this)">减肥瘦身</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">控制进食速度</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">改善消化(胃不适)</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">正念饮食</span>
+                    <span class="survey-tag" onclick="toggleTag(this)">只是好奇试用</span>
+                </div>
+
+                <label class="survey-q-title">2. 您目前的使用感受如何？(单选)</label>
+                <div class="tags-wrapper" id="tagsQ2">
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">非常有帮助</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">体验很舒适</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">过于简单/无聊</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">节奏很难跟随</span>
+                    <span class="survey-tag" onclick="selectTag(this, 'tagsQ2')">没什么用</span>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="close-btn-full" style="margin:0; background:white; border:1px solid #ddd;" onclick="showPage('pageSelect')">取消</button>
+                    <button class="close-btn-full" style="margin:0; background:var(--primary); color:white;" onclick="submitSurvey()">提交反馈</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
+        // === 1. 原有基础 JS 逻辑 (计时、动画、状态) ===
         let config = { biteTime: 3000, chewTime: 30000, restTime: 5000 };
         let state = { isRunning: false, isPaused: false, bites: 0, totalSeconds: 0, timerInterval: null, phaseTimeout: null };
-        
         const els = {
-            container: document.getElementById('appContainer'),
-            mainText: document.getElementById('mainText'),
-            subText: document.getElementById('subText'),
-            btnMain: document.getElementById('btnMain'),
-            btnFinish: document.getElementById('btnFinish'),
-            dispBites: document.getElementById('dispBites'),
-            dispTime: document.getElementById('dispTime'),
-            chewRange: document.getElementById('chewRange'),
-            rangeBubble: document.getElementById('rangeBubble'),
-            historyList: document.getElementById('historyList')
+            container: document.getElementById('appContainer'), mainText: document.getElementById('mainText'), subText: document.getElementById('subText'),
+            btnMain: document.getElementById('btnMain'), btnFinish: document.getElementById('btnFinish'),
+            dispBites: document.getElementById('dispBites'), dispTime: document.getElementById('dispTime'),
+            modalGratuity: document.getElementById('modalGratuity')
         };
 
-        function toggleState() { if (!state.isRunning) startMeal(); else if (state.isPaused) resumeMeal(); else pauseMeal(); }
-        
-        function startMeal() { 
-            state.isRunning = true; state.isPaused = false; state.bites = 0; state.totalSeconds = 0; 
-            updateStats(); 
-            els.btnMain.innerText = "暂停"; els.btnMain.className = "btn btn-secondary"; els.btnFinish.style.display = "block"; 
-            if(state.timerInterval) clearInterval(state.timerInterval); 
-            state.timerInterval = setInterval(() => { state.totalSeconds++; updateStats(); }, 1000); 
-            runPhase('bite'); 
-        }
-        
+        function toggleState() { !state.isRunning ? startMeal() : state.isPaused ? resumeMeal() : pauseMeal(); }
+        function startMeal() { state.isRunning = true; state.isPaused = false; state.bites = 0; state.totalSeconds = 0; updateStats(); els.btnMain.innerText = "暂停"; els.btnMain.className = "btn btn-secondary"; els.btnFinish.style.display = "block"; if(state.timerInterval) clearInterval(state.timerInterval); state.timerInterval = setInterval(() => { state.totalSeconds++; updateStats(); }, 1000); runPhase('bite'); }
         function pauseMeal() { state.isPaused = true; clearTimeout(state.phaseTimeout); els.btnMain.innerText = "继续"; els.btnMain.className = "btn btn-primary"; els.mainText.innerText = "已暂停"; els.subText.innerText = "调整呼吸"; els.container.className = "state-rest"; }
         function resumeMeal() { state.isPaused = false; els.btnMain.innerText = "暂停"; els.btnMain.className = "btn btn-secondary"; runPhase('bite'); }
-        
-        function finishMeal() { 
+        function fullFinish() { 
             saveHistory(); 
             clearInterval(state.timerInterval); clearTimeout(state.phaseTimeout); 
-            state.isRunning = false; state.isPaused = false; 
-            els.btnMain.innerText = "开始用餐"; els.btnMain.className = "btn btn-primary"; els.btnFinish.style.display = "none"; 
-            els.container.className = "state-rest"; 
-            // Reset to branding on finish
-            els.mainText.innerText = "Chewing"; els.subText.innerText = "慢食伴侣"; 
+            state.isRunning = false; state.isPaused = false; els.btnMain.innerText = "开始用餐"; els.btnMain.className = "btn btn-primary"; els.btnFinish.style.display = "none"; els.container.className = "state-rest"; els.mainText.innerText = "Chewing"; els.subText.innerText = "慢食伴侣"; 
+            els.modalGratuity.classList.remove('active'); // 关弹窗
         }
-
         function runPhase(phase) {
             if (!state.isRunning || state.isPaused) return;
             let duration = phase === 'bite' ? config.biteTime : phase === 'chew' ? config.chewTime : config.restTime;
-            if (phase === 'bite') { els.container.className = "state-bite"; els.mainText.innerText = "吃一口"; els.subText.innerText = "拿起食物"; state.phaseTimeout = setTimeout(() => { state.bites++; updateStats(); runPhase('chew'); }, duration); } 
-            else if (phase === 'chew') { els.container.className = "state-chew"; els.mainText.innerText = "细嚼慢咽"; els.subText.innerText = "跟随节奏"; state.phaseTimeout = setTimeout(() => { runPhase('rest'); }, duration); } 
-            else if (phase === 'rest') { els.container.className = "state-rest"; els.mainText.innerText = "吞咽 & 休息"; els.subText.innerText = "深呼吸..."; state.phaseTimeout = setTimeout(() => { runPhase('bite'); }, duration); }
+            if (phase === 'bite') { els.container.className = "state-bite"; els.mainText.innerText = "吃一口"; els.subText.innerText = "放入食物"; state.phaseTimeout = setTimeout(() => { state.bites++; updateStats(); runPhase('chew'); }, duration); } 
+            else if (phase === 'chew') { els.container.className = "state-chew"; els.mainText.innerText = "细嚼慢咽"; els.subText.innerText = "享受滋味"; state.phaseTimeout = setTimeout(() => { runPhase('rest'); }, duration); } 
+            else if (phase === 'rest') { els.container.className = "state-rest"; els.mainText.innerText = "吞咽"; els.subText.innerText = "放松呼吸"; state.phaseTimeout = setTimeout(() => { runPhase('bite'); }, duration); }
         }
-        
         function updateStats() { els.dispBites.innerText = state.bites; const m = Math.floor(state.totalSeconds / 60).toString().padStart(2, '0'); const s = (state.totalSeconds % 60).toString().padStart(2, '0'); els.dispTime.innerText = `${m}:${s}`; }
 
-        function openSettings() { document.getElementById('modalSettings').classList.add('active'); updateSettingsUI(); }
-        function closeSettings() { document.getElementById('modalSettings').classList.remove('active'); config.chewTime = parseInt(els.chewRange.value) * 1000; }
+        /* === 2. 弹窗和新功能 JS 逻辑 === */
         
-        function updateSettingsUI() {
-            const range = els.chewRange;
-            const bubble = els.rangeBubble;
-            const val = range.value;
-            const min = range.min ? range.min : 0;
-            const max = range.max ? range.max : 100;
-            bubble.innerText = val + "秒";
-            const newVal = Number(((val - min) * 100) / (max - min));
-            bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
+        // 结束前触发打赏弹窗
+        function preFinishMeal() { pauseMeal(); showPage('pageSelect'); els.modalGratuity.classList.add('active'); }
+
+        // 页面切换
+        function showPage(id) {
+            ['pageSelect', 'pagePay', 'pageSurvey'].forEach(pid => document.getElementById(pid).style.display = 'none');
+            document.getElementById(id).style.display = 'flex'; // survey和pay使用了flex布局或者column
+            if(id === 'pageSurvey' || id === 'pageSelect') document.getElementById(id).style.display = 'block';
+            if(id === 'pagePay') document.getElementById(id).style.display = 'flex';
+        }
+
+        // 支付逻辑
+        function toPay(amt) {
+            document.getElementById('payAmount').innerText = amt + ".00";
+            switchPay('ali'); // 默认阿里
+            showPage('pagePay');
+        }
+        function switchPay(type) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(type === 'ali') {
+                document.getElementById('btnAli').classList.add('active');
+                document.getElementById('qrImg').src = './images/ali.jpg';
+                document.getElementById('payName').innerText = '*洁';
+            } else {
+                document.getElementById('btnWx').classList.add('active');
+                document.getElementById('qrImg').src = './images/wx.jpg';
+                document.getElementById('payName').innerText = '杨杨(*洁)';
+            }
+        }
+
+        // 问卷逻辑
+        function toSurvey() { showPage('pageSurvey'); }
+        function toggleTag(el) { el.classList.toggle('active'); } // 多选
+        function selectTag(el, pid) { 
+            document.getElementById(pid).querySelectorAll('.survey-tag').forEach(t=>t.classList.remove('active'));
+            el.classList.add('active'); // 单选
         }
         
-        function openHistory() { document.getElementById('modalHistory').classList.add('active'); renderHistory(); }
-        function closeHistory() { document.getElementById('modalHistory').classList.remove('active'); }
-        function openHelp() { document.getElementById('modalHelp').classList.add('active'); }
-        function closeHelp() { document.getElementById('modalHelp').classList.remove('active'); }
+        function submitSurvey() {
+            // 获取数据
+            let q1 = []; document.querySelectorAll('#tagsQ1 .survey-tag.active').forEach(t=>q1.push(t.innerText));
+            let q2 = []; document.querySelectorAll('#tagsQ2 .survey-tag.active').forEach(t=>q2.push(t.innerText));
+            
+            if(q1.length===0 && q2.length===0) { alert('请至少选择一项哦'); return; }
+
+            const subject = "Chewing 用户反馈";
+            const body = `Chewing 反馈:\n\n1. 希望解决的问题:\n${q1.join(', ') || '无'}\n\n2. 使用感受:\n${q2.join(', ') || '无'}`;
+            
+            // 拉起邮箱
+            window.location.href = `mailto:2753669992@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // 稍后自动关闭
+            setTimeout(() => { fullFinish(); alert('邮件已生成，请发送。感谢您的反馈！'); }, 1000);
+        }
+
+        // 杂项
         function saveHistory() { if(state.bites===0)return; let h=JSON.parse(localStorage.getItem('savorHistory')||'[]'); h.unshift({date:new Date().toLocaleString('zh-CN'), bites:state.bites, duration:state.totalSeconds}); if(h.length>20)h.pop(); localStorage.setItem('savorHistory',JSON.stringify(h)); }
-        function renderHistory() { let h=JSON.parse(localStorage.getItem('savorHistory')||'[]'); els.historyList.innerHTML = h.length ? '' : '<li style="text-align:center;color:#999;padding:20px;">暂无记录</li>'; h.forEach(i=>{ let d = i.date.split(' ')[0]; let t = i.date.split(' ')[1] || ''; els.historyList.innerHTML+=`<li class="history-item"><span><strong>${d}</strong><br>${t}</span><span>${i.bites} 口</span></li>` }); }
-        function clearHistory() { localStorage.removeItem('savorHistory'); renderHistory(); }
+        function openSettings(){document.getElementById('modalSettings').classList.add('active'); updateSettingsUI();}
+        function closeModals(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active'));}
+        function updateSettingsUI(){const r=document.getElementById('chewRange'); document.getElementById('rangeBubble').innerText=r.value+'秒'; config.chewTime = r.value*1000; }
+        function openHistory(){let l=document.getElementById('historyList'); l.innerHTML=''; JSON.parse(localStorage.getItem('savorHistory')||'[]').forEach(i=>l.innerHTML+=`<li class="history-item"><span>${i.date}</span><span>${i.bites}口</span></li>`); document.getElementById('modalHistory').classList.add('active');}
+        function clearHistory(){localStorage.removeItem('savorHistory'); openHistory();}
+        function openHelp(){document.getElementById('modalHelp').classList.add('active');}
     </script>
 </body>
 </html>
